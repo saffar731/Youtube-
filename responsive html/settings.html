@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - YouTube Clone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            display: flex;
+            transition: background 0.3s, color 0.3s;
+        }
+        
+        body.dark {
+            background: #181818;
+            color: #f1f1f1;
+        }
+        
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: background 0.3s;
+        }
+        
+        body.dark header {
+            background: #202020;
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: red;
+        }
+        
+        .search-bar {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 20px;
+            display: none;
+        }
+        
+        .profile {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #ddd;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 200px;
+            height: calc(100% - 60px);
+            background: #fff;
+            border-right: 1px solid #ddd;
+            padding: 1rem 0;
+            overflow-y: auto;
+            transition: background 0.3s;
+        }
+        
+        body.dark .sidebar {
+            background: #202020;
+            border-right: 1px solid #444;
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            padding: 12px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+        }
+        
+        .sidebar li:hover {
+            background: #f0f0f0;
+        }
+        
+        body.dark .sidebar li:hover {
+            background: #333;
+        }
+        
+        .content {
+            margin-top: 60px;
+            margin-left: 200px;
+            padding: 1rem;
+            width: 100%;
+        }
+        
+        .settings-section {
+            background: #fff;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s;
+        }
+        
+        body.dark .settings-section {
+            background: #202020;
+        }
+        
+        .settings-section h2 {
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 0.5rem;
+        }
+        
+        .settings-item {
+            margin: 10px 0;
+        }
+        
+        .dark-toggle {
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .menu-btn {
+            display: none;
+            cursor: pointer;
+            margin-right: 10px;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .menu-btn div {
+            width: 25px;
+            height: 3px;
+            background: #333;
+        }
+        
+        body.dark .menu-btn div {
+            background: #f1f1f1;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .content {
+                margin-left: 0;
+            }
+            .menu-btn {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="menu-btn" id="menu-btn">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="logo">YouTube</div>
+        <i class="fas fa-moon dark-toggle" id="dark-toggle"></i>
+        <img src="./Untitled design.png" class="profile" id="profile">
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <ul>
+            <li onclick="window.location.href='r.html'"><i class="fas fa-home"></i> Home</li>
+            <li><i class="fas fa-cog"></i> Settings</li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <div class="settings-section">
+            <h2>Account Settings</h2>
+            <div class="settings-item">Username: DemoUser</div>
+            <div class="settings-item">Email: demo@example.com</div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Appearance</h2>
+            <div class="settings-item">
+                <button id="toggle-theme-btn">Toggle Dark Mode</button>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>Other Settings</h2>
+            <div class="settings-item">Coming soon...</div>
+        </div>
+    </main>
+
+    <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const darkToggle = document.getElementById('dark-toggle');
+        const body = document.body;
+        const toggleThemeBtn = document.getElementById('toggle-theme-btn');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
+
+        darkToggle.addEventListener('click', () => {
+            body.classList.toggle('dark');
+        });
+
+        toggleThemeBtn.addEventListener('click', () => {
+            body.classList.toggle('dark');
+        });
+    </script>
+
+</body>
+
+</html>

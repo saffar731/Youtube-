@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Clone with Iframes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            display: flex;
+            transition: background 0.3s, color 0.3s;
+        }
+        
+        body.dark {
+            background: #181818;
+            color: #f1f1f1;
+        }
+        
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: background 0.3s;
+        }
+        
+        body.dark header {
+            background: #202020;
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: red;
+        }
+        /* DESKTOP SEARCH BAR */
+        
+        .search-bar {
+            flex: 1;
+            max-width: 500px;
+            display: flex;
+        }
+        
+        .search-bar input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 2px 0 0 2px;
+            outline: none;
+            transition: background 0.3s, border 0.3s;
+        }
+        
+        body.dark .search-bar input {
+            background: #121212;
+            color: #f1f1f1;
+            border: 1px solid #444;
+        }
+        
+        .search-bar button {
+            padding: 8px 16px;
+            border: 1px solid #ccc;
+            background: #f8f8f8;
+            cursor: pointer;
+            border-left: none;
+            transition: background 0.3s, border 0.3s;
+        }
+        
+        body.dark .search-bar button {
+            background: #333;
+            border: 1px solid #444;
+            color: #f1f1f1;
+        }
+        /* MOBILE ICON */
+        
+        .mobile-search-icon {
+            display: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        /* MOBILE SEARCH BAR */
+        
+        @media (max-width: 768px) {
+            .search-bar {
+                display: none;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                right: 0;
+                background: #fff;
+                padding: 10px 20px;
+                z-index: 999;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+            body.dark .search-bar {
+                background: #202020;
+            }
+            .search-bar.active {
+                display: flex;
+            }
+            .mobile-search-icon {
+                display: block;
+                margin-left: 10px;
+            }
+        }
+        
+        .profile {
+            position: relative;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #ddd;
+            cursor: pointer;
+        }
+        
+        .dropdown {
+            position: absolute;
+            top: 45px;
+            right: 0;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: none;
+            flex-direction: column;
+            min-width: 150px;
+            transition: background 0.3s;
+        }
+        
+        body.dark .dropdown {
+            background: #202020;
+            border: 1px solid #444;
+        }
+        
+        .dropdown a {
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #333;
+            transition: background 0.3s;
+        }
+        
+        body.dark .dropdown a {
+            color: #f1f1f1;
+        }
+        
+        .dropdown a:hover {
+            background: #f0f0f0;
+        }
+        
+        body.dark .dropdown a:hover {
+            background: #333;
+        }
+        
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 200px;
+            height: calc(100% - 60px);
+            background: #fff;
+            border-right: 1px solid #ddd;
+            padding: 1rem 0;
+            overflow-y: auto;
+            transition: transform 0.3s ease, background 0.3s;
+        }
+        
+        body.dark .sidebar {
+            background: #202020;
+            border-right: 1px solid #444;
+        }
+        
+        .sidebar.hidden {
+            transform: translateX(-100%);
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            padding: 12px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.3s;
+        }
+        
+        .sidebar li:hover {
+            background: #f0f0f0;
+        }
+        
+        body.dark .sidebar li:hover {
+            background: #333;
+        }
+        
+        .content {
+            margin-top: 60px;
+            margin-left: 200px;
+            padding: 1rem;
+            width: 100%;
+        }
+        
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+        
+        .video {
+            background: #fff;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        
+        .video:hover {
+            transform: scale(1.02);
+        }
+        
+        body.dark .video {
+            background: #202020;
+        }
+        
+        .video iframe {
+            width: 100%;
+            height: 170px;
+            border: none;
+        }
+        
+        .video-details {
+            padding: 10px;
+        }
+        
+        .video-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .video-channel {
+            color: #555;
+            font-size: 0.9rem;
+        }
+        
+        body.dark .video-channel {
+            color: #aaa;
+        }
+        
+        .menu-btn {
+            display: none;
+            cursor: pointer;
+            margin-right: 10px;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .menu-btn div {
+            width: 25px;
+            height: 3px;
+            background: #333;
+        }
+        
+        body.dark .menu-btn div {
+            background: #f1f1f1;
+        }
+        
+        .dark-toggle {
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .content {
+                margin-left: 0;
+            }
+            .menu-btn {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="menu-btn" id="menu-btn">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <div class="logo">YouTube</div>
+        <div class="search-bar" id="search-bar">
+            <input type="text" placeholder="Search">
+            <button><i class="fas fa-search"></i></button>
+        </div>
+        <i class="fas fa-search mobile-search-icon" id="mobile-search-icon"></i>
+
+        <i class="fas fa-moon dark-toggle" id="dark-toggle"></i>
+        <img src="./Untitled design.png" class="profile" id="profile">
+        <div class="dropdown" id="dropdown">
+            <a href="#"><i class="fas fa-user" style="padding-right: 1rem; padding-right: 1rem;"></i>  Profile</a>
+            <a href="settings.html"><i class="fas fa-cog settings-ico" style="padding-right: 1rem; padding-right: 1rem;"></i>Settings</a>
+            <a href="#" id="logout"><i class="fas fa-sign-out-alt logout-icon" style="padding-right: 1rem; padding-right: 1rem;"></i>Logout</a>
+        </div>
+    </header>
+
+    <nav class="sidebar" id="sidebar">
+        <ul>
+            <li><i class="fas fa-home"></i> Home</li>
+            <li><i class="fas fa-fire"></i> Trending</li>
+            <li><i class="fas fa-folder"></i> Subscriptions</li>
+            <li><i class="fas fa-photo-video"></i> Library</li>
+            <li><i class="fas fa-history"></i> History</li>
+            <li><i class="fas fa-clock"></i> Watch Later</li>
+        </ul>
+    </nav>
+
+    <main class="content">
+        <div class="video-grid">
+            <div class="video">
+                <iframe src="https://www.youtube.com/embed/yW-rlklCo4g" allowfullscreen></iframe>
+                <div class="video-details">
+                    <div class="video-title">
+
+                        Responsive Navigation Bar with Submenu Using HTML & CSS | Modern Website Menu Design</div>
+                    <div class="video-channel">Godesweb</div>
+                </div>
+            </div>
+            <div class="video">
+                <iframe src="https://www.youtube.com/embed/jmuFP05YAmc" allowfullscreen></iframe>
+                <div class="video-details">
+                    <div class="video-title">
+                        How to Create Your Own Stock-Analysis AI Agent (n8n Template)</div>
+                    <div class="video-channel">WebsiteLearners</div>
+                </div>
+            </div>
+            <div class="video">
+                <iframe src="https://www.youtube.com/embed/AUY3RzYV-dE" allowfullscreen></iframe>
+                <div class="video-details">
+                    <div class="video-title">The Concordia Cruise Mystery | What Went Wrong? | Titanic of 2012 | Dhruv Rathee</div>
+                    <div class="video-channel">Dhruv Rathee</div>
+                </div>
+            </div>
+            <!-- Add more video iframes here -->
+            <div class="video">
+                <iframe src="https://www.youtube.com/embed/980SJ8KQFY4" allowfullscreen></iframe>
+                <div class="video-details">
+                    <div class="video-title">This Airplane Lost its Roof at 24,000 ft | What Happened Next? | Dhruv Rathee</div>
+                    <div class="video-channel">Dhruv Rathee</div>
+                </div>
+            </div>
+            <div class="video">
+                <iframe src="https://www.youtube.com/embed/1BwrXjgAPvw" allowfullscreen></iframe>
+                <div class="video-details">
+                    <div class="video-title">
+                        Kalpana Chawla | Mystery of NASA Columbia Space Disaster | Dhruv Rathee</div>
+                    <div class="video-channel">Dhruv Rathee</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const menuBtn = document.getElementById('menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const darkToggle = document.getElementById('dark-toggle');
+        const body = document.body;
+        const profile = document.getElementById('profile');
+        const dropdown = document.getElementById('dropdown');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
+
+        darkToggle.addEventListener('click', () => {
+            body.classList.toggle('dark');
+        });
+
+        profile.addEventListener('click', () => {
+            dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (!profile.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        const mobileSearchIcon = document.getElementById('mobile-search-icon');
+        const searchBar = document.getElementById('search-bar');
+
+        mobileSearchIcon.addEventListener('click', () => {
+            searchBar.classList.toggle('active');
+        });
+
+        const logoutBtn = document.getElementById('logout');
+
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('loggedIn');
+            window.location.href = 'login.html';
+            if (!localStorage.getItem('loggedIn')) {
+                window.location.href = 'login.html';
+            }
+
+        });
+    </script>
+</body>
+
+</html>
